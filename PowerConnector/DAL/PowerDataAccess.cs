@@ -127,7 +127,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
 
             if(command.GetType() == typeof(System.Data.SqlClient.SqlCommand) && (numberOfParametersToStoredProcedure - numberOfValuesProvidedForStoredProcedure) == 1)
             {
-                command.Parameters["@RETURN_VALUE"].Value = 0;
+                command.Parameters.RemoveAt(0);
                 return true;
             }
 
@@ -399,7 +399,8 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return Connection.Query<T>(query, BuildDapperParameters(command), Transaction);
+                var dapperParams = BuildDapperParameters(command);
+                return Connection.Query<T>(query, dapperParams, Transaction, commandType: commandType);
             }
         }
 
@@ -416,7 +417,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return await Connection.QueryAsync<T>(query, BuildDapperParameters(command), Transaction);
+                return await Connection.QueryAsync<T>(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -433,7 +434,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return Connection.QuerySingleOrDefault<T>(query, BuildDapperParameters(command), Transaction);
+                return Connection.QuerySingleOrDefault<T>(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -450,7 +451,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return await Connection.QuerySingleOrDefaultAsync<T>(query, BuildDapperParameters(command), Transaction);
+                return await Connection.QuerySingleOrDefaultAsync<T>(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -560,7 +561,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             {
                 PrepareCommand(command, commandType, query, parameters);
                 
-                IEnumerable<dynamic> result = Connection.Query(query, BuildDapperParameters(command), Transaction);
+                IEnumerable<dynamic> result = Connection.Query(query, BuildDapperParameters(command), Transaction, commandType: commandType);
                 if (result.Count() > 0)
                 {
                     json = JsonConvert.SerializeObject(result);
@@ -584,7 +585,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             {
                 PrepareCommand(command, commandType, query, parameters);
 
-                IEnumerable<dynamic> result = await Connection.QueryAsync(query, BuildDapperParameters(command), Transaction);
+                IEnumerable<dynamic> result = await Connection.QueryAsync(query, BuildDapperParameters(command), Transaction, commandType: commandType);
                 if (result.Count() > 0)
                 {
                     json = JsonConvert.SerializeObject(result);
@@ -608,7 +609,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             {
                 PrepareCommand(command, commandType, query, parameters);
 
-                dynamic result = Connection.QuerySingleOrDefault(query, BuildDapperParameters(command), Transaction);
+                dynamic result = Connection.QuerySingleOrDefault(query, BuildDapperParameters(command), Transaction, commandType: commandType);
                 if (result != null)
                 {
                     json = JsonConvert.SerializeObject(result);
@@ -633,7 +634,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             {
                 PrepareCommand(command, commandType, query, parameters);
 
-                object result = await Connection.QuerySingleOrDefaultAsync(typeof(object), query, BuildDapperParameters(command), Transaction);
+                object result = await Connection.QuerySingleOrDefaultAsync(typeof(object), query, BuildDapperParameters(command), Transaction, commandType: commandType);
                 if (result != null)
                 {
                     json = JsonConvert.SerializeObject(result);
@@ -648,7 +649,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return Connection.Query(query, BuildDapperParameters(command), Transaction);
+                return Connection.Query(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -657,7 +658,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return await Connection.QueryAsync(query, BuildDapperParameters(command), Transaction);
+                return await Connection.QueryAsync(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -666,7 +667,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return Connection.QueryFirstOrDefault(query, BuildDapperParameters(command), Transaction);
+                return Connection.QueryFirstOrDefault(query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
@@ -675,7 +676,7 @@ namespace TelviSoft.Enterprise.Connectors.PowerConnector.DAL
             using (DbCommand command = Connection.CreateCommand())
             {
                 PrepareCommand(command, commandType, query, parameters);
-                return await Connection.QueryFirstOrDefaultAsync(typeof(object), query, BuildDapperParameters(command), Transaction);
+                return await Connection.QueryFirstOrDefaultAsync(typeof(object), query, BuildDapperParameters(command), Transaction, commandType: commandType);
             }
         }
 
